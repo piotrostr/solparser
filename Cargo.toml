@@ -1,0 +1,26 @@
+[package]
+name = "solparser"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5.39", features = ["derive", "cargo", "wrap_help"] }
+toml = "0.8.12"
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+yellowstone-vixen = { version = "0.3.0", features = ["stream"] }
+yellowstone-vixen-jupiter-swap-parser = "0.3.0"
+yellowstone-vixen-kamino-limit-orders-parser = "0.3.0"
+yellowstone-vixen-meteora-amm-parser = "0.3.0"
+yellowstone-vixen-meteora-parser = "0.3.0"
+yellowstone-vixen-moonshot-parser = "0.3.0"
+yellowstone-vixen-orca-whirlpool-parser = "0.3.0"
+yellowstone-vixen-parser = { version = "0.3.0", features = ["proto", "token-extensions", "token-program"] }
+yellowstone-vixen-pump-swaps-parser = "0.3.0"
+yellowstone-vixen-pumpfun-parser = "0.3.0"
+yellowstone-vixen-raydium-amm-v4-parser = "0.3.0"
+yellowstone-vixen-raydium-clmm-parser = "0.3.0"
+yellowstone-vixen-raydium-cpmm-parser = "0.3.0"
+
+[build-dependencies]
+prost-build = "0.13.1"

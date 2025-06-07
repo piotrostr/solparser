@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 60s  # Match the export-interval from Vixen.toml
+
+scrape_configs:
+  - job_name: 'example'  # Matches the job name from Vixen.toml
+    metrics_path: '/'
+    static_configs:
+      - targets: ['localhost:3030']  # Matches the endpoint from Vixen.toml
+    basic_auth:
+      username: 'foo'  # Matches the username from Vixen.toml
+      password: 'bar'  # Matches the password from Vixen.toml 
