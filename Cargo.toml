@@ -9,11 +9,11 @@ tokio = { version = "1.45.1", features = ["full"] }
 toml = "0.8.12"
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
-# yellowstone-vixen = { version = "0.3.0", features = ["stream"] }
-yellowstone-vixen = { path = "../../yellowstone-vixen/crates/runtime", features = [
-	"stream",
-] }
-yellowstone-grpc-proto = { version = "6.0.0" }
+yellowstone-vixen = { version = "0.3.0", features = ["stream"] }
+# yellowstone-vixen = { path = "../../yellowstone-vixen/crates/runtime", features = [
+# 	"stream",
+# ] }
+yellowstone-grpc-proto = { version = "2.0.0", default-features = false }
 yellowstone-vixen-jupiter-swap-parser = "0.3.0"
 yellowstone-vixen-kamino-limit-orders-parser = "0.3.0"
 yellowstone-vixen-meteora-amm-parser = "0.3.0"
@@ -25,6 +25,7 @@ yellowstone-vixen-parser = { version = "0.3.0", features = [
 	"token-extensions",
 	"token-program",
 ] }
+yellowstone-vixen-proto = { version = "0.3.0" }
 yellowstone-vixen-pump-swaps-parser = "0.3.0"
 yellowstone-vixen-pumpfun-parser = "0.3.0"
 yellowstone-vixen-raydium-amm-v4-parser = "0.3.0"

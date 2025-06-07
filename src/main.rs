@@ -7,30 +7,14 @@
 #![warn(clippy::pedantic)]
 #![allow(clippy::module_name_repetitions)]
 
+use eyre::WrapErr;
+use solana_transaction_status_client_types::EncodedConfirmedTransactionWithStatusMeta;
 use std::path::PathBuf;
 
 use clap::Parser as _;
-use eyre::Context;
-use solana_rpc_client::nonblocking::rpc_client::RpcClient;
-use solana_transaction_status_client_types::{
-    EncodedConfirmedTransactionWithStatusMeta, UiTransactionEncoding,
-};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-use yellowstone_grpc_proto::{
-    convert_to::create_transaction,
-    geyser::{SubscribeUpdateTransaction, SubscribeUpdateTransactionInfo},
-    prelude::Transaction,
-};
-use yellowstone_vixen::{
-    self as vixen,
-    builder::RuntimeKind,
-    config::NullConfig,
-    metrics::NullMetrics,
-    proto::parser,
-    stream::config::StreamConfig,
-    vixen_core::{self, proto::Proto},
-    Pipeline,
-};
+use yellowstone_grpc_proto::geyser::{SubscribeUpdateTransaction, SubscribeUpdateTransactionInfo};
+use yellowstone_vixen::{self as vixen, proto::parser, vixen_core::proto::Proto, Pipeline};
 use yellowstone_vixen_jupiter_swap_parser::{
     accounts_parser::AccountParser as JupiterSwapAccParser,
     instructions_parser::InstructionParser as JupiterSwapIxParser,
@@ -103,9 +87,16 @@ pub struct Opts {
     config: PathBuf,
 }
 
-fn build_server(
-    config: StreamConfig<NullConfig>,
-) -> vixen::stream::Server<NullConfig, NullMetrics> {
+async fn _unused() -> eyre::Result<()> {
+    tracing_subscriber::registry()
+        .with(tracing_subscriber::EnvFilter::from_default_env())
+        .with(tracing_subscriber::fmt::layer())
+        .init();
+
+    let Opts { config } = Opts::parse();
+    let config = std::fs::read_to_string(config).expect("Error reading config file");
+    let config = toml::from_str(&config).expect("Error parsing config");
+
     vixen::stream::Server::builder()
         .descriptor_set(parser::token::DESCRIPTOR_SET)
         .descriptor_set(parser::token_extensions::DESCRIPTOR_SET)
@@ -147,6 +138,11 @@ fn build_server(
         .instruction(Proto::new(RaydiumClmmIxParser))
         .instruction(Proto::new(KaminoLimitOrdersIxParser))
         .build(config)
+        .try_run_async()
+        .await
+        .wrap_err("Error running server")?;
+
+    Ok(())
 }
 
 #[derive(Debug)]
@@ -161,19 +157,19 @@ impl<V: std::fmt::Debug + Sync> vixen::Handler<V> for SolParser {
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
-    tracing_subscriber::registry()
-        .with(tracing_subscriber::EnvFilter::from_default_env())
-        .with(tracing_subscriber::fmt::layer())
-        .init();
+    // tracing_subscriber::registry()
+    //     .with(tracing_subscriber::EnvFilter::from_default_env())
+    //     .with(tracing_subscriber::fmt::layer())
+    //     .init();
 
-    let Opts { config } = Opts::parse();
-    let config =
-        toml::from_str(&std::fs::read_to_string(config).expect("Error reading config file"))
-            .expect("Error parsing config");
+    // let Opts { config } = Opts::parse();
+    // let config =
+    //     toml::from_str(&std::fs::read_to_string(config).expect("Error reading config file"))
+    //         .expect("Error parsing config");
 
-    let runtime = vixen::Runtime::builder()
-        .instruction(Pipeline::new(Proto::new(MeteoraIxParser), [SolParser]))
-        .build(config);
+    // let runtime = vixen::Runtime::builder()
+    //     .instruction(Pipeline::new(Proto::new(MeteoraIxParser), [SolParser]))
+    //     .build(config);
 
     // let rpc_client =
     //     RpcClient::new(std::env::var("SOLANA_RPC_URL").expect("SOLANA_RPC_URL is set"));
@@ -190,13 +186,15 @@ async fn main() -> eyre::Result<()> {
     //     transaction,
     // };
 
-    runtime
-        .process_transaction(
-            &vixen::proto::parser::transaction::Transaction::default(),
-            &vixen::proto::parser::transaction::Transaction::default(),
-        )
-        .await
-        .wrap_err("Error processing transaction")?;
+    // runtime
+    //     .process_transaction(
+    //         yellowstone_grpc_proto::geyser::SubscribeUpdateTransaction::default(),
+    //         vec![],
+    //     )
+    //     .await
+    //     .wrap_err("Error processing transaction")?;
+
+    _unused().await?;
 
     Ok(())
 }
