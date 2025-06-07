@@ -111,7 +111,7 @@ async fn _unused() -> eyre::Result<()> {
         // .descriptor_set(RAYDIUM_AMM_V4_DESCRIPTOR_SET)
         // .descriptor_set(RAYDIUM_CLMM_DESCRIPTOR_SET)
         // .descriptor_set(KAMINO_LIMIT_ORDERS_DESCRIPTOR_SET)
-        .account(Proto::new(MeteoraAccParser))
+        // .account(Proto::new(MeteoraAccParser))
         // .account(Proto::new(PumpfunAccParser))
         // .account(Proto::new(TokenExtensionProgramAccParser))
         // .account(Proto::new(TokenProgramAccParser))
